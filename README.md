@@ -1,36 +1,70 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<h1 align="center">Тестовое задание: Форма авторизации</h1>
 
-## Getting Started
+<p align="center">Страница авторизации с валидацией, на Next.js, TypeScript, Taiwind CSS. 
+</p>
+<p align="center"> 
+Проект включает форму входа по телефону и паролю с обработкой различных состояний и ошибок.</p>
 
-First, run the development server:
+<h3 align="center"><a href="https://test-dobby-var1.vercel.app/">Ссылка на деплой</a></h3>
+
+## Установка и запуск
+
+### Установка
 
 ```bash
+# Клонирование репозитория
+git clone https://github.com/annalatyeva/test-dobby-var
+cd test-dobby-var
+
+# Установка зависимостей
+npm i
+
+# Запуск в режиме разработки
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
+# Сборка проекта
+npm run build
+
+# Запуск production версии
+npm run start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+После запуска приложение будет доступно по адресу: `http://localhost:3000`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Технологии
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Next.js 14** (App Router)
+- **TypeScript**
+- **Tailwind CSS**
 
-## Learn More
+## Функциональность
 
-To learn more about Next.js, take a look at the following resources:
+### Страница авторизации
+- Адрес: "/login" (при запуске приложения открывается автоматически)
+- Содержит: поле ввода номера телефона, поле ввода пароля, кнопку "Войти"
+- Сабмит по нажатию на кнопку или на "Enter"
+- Валидация телефона: не пустой, удаляются все нецифровые символы, проверка на длину и формат. При вводе телефона отображается в поле в формате `+7 (###) ###-##-##`.
+- Валидация пароля: не пустой
+- Состояние загрузки с блокировкой кнопки и полей ввода, к кнопке добавляется спиннер
+- Ошибки: отображаются в UI
+- Обработка сетевых ошибок и таймаутов
+- Форма сохраняет полученные cookies
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Страница welcome
+- Адрес: "/welcome" (при попытке входа без сохраненных cookies, переводит на "/login")
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Прокси-роут
 
-## Deploy on Vercel
+Проект использует прокси-роут для обхода CORS проблем:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Путь: `src/app/api/login/route.ts`
+- Функциональность: прокидывает запросы с фронтенда на внешний API
+- Метод: POST
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Тестовые учетные данные
+
+- **Логин**: `79990001122`
+- **Пароль**: `qweasdzxc`
+
+
+
