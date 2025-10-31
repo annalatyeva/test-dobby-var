@@ -8,12 +8,12 @@ export const metadata: Metadata = {
 };
 
 export default async function WelcomePage() {
-  // const cookieStore = await cookies();
-  // const session = cookieStore.get("session");
+  const cookieStore = await cookies();
+  const session = cookieStore.get("session");
 
-  // if (!session) {
-  //   redirect("/login");
-  // }
+  if (!session) {
+    redirect("/login");
+  }
 
   return (
     <main className="h-screen w-full px-10 flex flex-col justify-center">

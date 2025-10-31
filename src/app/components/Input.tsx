@@ -16,7 +16,7 @@ export default function Input({ label, error, ...props }: InputProps) {
 
       <input
         {...props}
-        className={`w-full py-2 px-4 border-2 border-solid rounded-[16px] text-base transition-all duration-200 focus:outline-none focus:ring-2 ${
+        className={`w-full py-2 px-4 border-2 border-solid rounded-2xl text-base transition-all duration-200 focus:outline-none focus:ring-2 ${
           hasError ? "border-red-500 bg-red-50 focus:border-red-500 focus:ring-red-100" : "border-gray-300 bg-white focus:border-(--main-orange) focus:ring-orange-100"
         } ${props.disabled ? "opacity-50 cursor-not-allowed" : ""}`}
       />
