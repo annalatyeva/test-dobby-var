@@ -67,12 +67,17 @@ export default function LoginForm() {
     if (!phoneError && !passwordError) {
       setIsLoading(true);
 
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 15000);
+
       try {
         const response = await fetch("/api/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ login: normalizedPhone, password }),
         });
+
+        clearTimeout(timeout);
 
         const data = await response.json();
 
@@ -90,6 +95,8 @@ export default function LoginForm() {
           }));
         }
       } catch {
+        clearTimeout(timeout);
+
         setErrors(prev => ({
           ...prev,
           formError: "Ошибка сети. Попробуйте позже.",
