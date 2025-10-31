@@ -1,16 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { LoginFormData, LoginFormErrors } from "@/app/login/types";
+import { useRouter } from "next/navigation";
+import { LoginFormErrors } from "@/app/login/types";
 import Input from "@/components/Input";
 import { validatePassword, validatePhone } from "./utils/validation";
 import { normalizePhone } from "./utils/normalizePhone";
 import { formatPhoneDisplay } from "./utils/formatPhoneDisplay";
 
 export default function LoginForm() {
-  const [loginData, setLoginData] = useState<LoginFormData>({ phone: "", password: "" });
-  const [errors, setErrors] = useState<LoginFormErrors>({ phoneError: "", passwordError: "" });
+  const router = useRouter();
+
   const [phoneDisplay, setFormDisplay] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [errors, setErrors] = useState<LoginFormErrors>({ phoneError: "", passwordError: "" });
 
   const handlePhoneFocus = (e: React.FocusEvent<HTMLInputElement>) => {
     if (!e.target.value) {
@@ -23,15 +26,14 @@ export default function LoginForm() {
 
   const handlePhoneChange = (value: string) => {
     setErrors(prev => ({ ...prev, phoneError: "" }));
-    const phone = normalizePhone(value);
-    setFormDisplay(formatPhoneDisplay(phone));
-    setLoginData(prev => ({ ...prev, phone: phone }));
+    setFormDisplay(formatPhoneDisplay(normalizePhone(value)));
   };
 
   const handlePhoneBlur = (value: string) => {
     if (value === "+7 " || value === "+7") {
       setFormDisplay("");
     }
+
     setErrors(prev => ({ ...prev, phoneError: validatePhone(value) }));
   };
 
@@ -39,21 +41,50 @@ export default function LoginForm() {
     setErrors(prev => ({ ...prev, passwordError: validatePassword(value) }));
   };
 
-  const handlePasswordChange = (value: string) => {
+  const handlePasswordChange = async (value: string) => {
     setErrors(prev => ({ ...prev, passwordError: "" }));
-    setLoginData(prev => ({ ...prev, password: value }));
+    setPassword(value);
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const phoneError = validatePhone(loginData.phone);
-    const passwordError = validatePassword(loginData.password);
+    const normalizedPhone = normalizePhone(phoneDisplay);
+
+    const phoneError = validatePhone(normalizedPhone);
+    const passwordError = validatePassword(password);
 
     setErrors({ phoneError, passwordError });
 
     if (!phoneError && !passwordError) {
-      console.log(loginData);
+      try {
+        const response = await fetch("/api/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ normalizedPhone, password }),
+        });
+
+        const data = await response.json();
+
+        if (response.status === 200) {
+          router.push("/welcome");
+        } else if (response.status === 401) {
+          setErrors(prev => ({
+            ...prev,
+            dataError: "Неверный логин или пароль",
+          }));
+        } else {
+          setErrors(prev => ({
+            ...prev,
+            dataError: `${data.error}`,
+          }));
+        }
+      } catch {
+        setErrors(prev => ({
+          ...prev,
+          dataError: "Ошибка сети. Попробуйте позже.",
+        }));
+      }
     }
   };
 
@@ -73,7 +104,7 @@ export default function LoginForm() {
       />
       <Input
         label="Пароль"
-        error={errors.passwordError}
+        error={errors.passwordError || errors.dataError || ""}
         type="password"
         name="password"
         id="password"

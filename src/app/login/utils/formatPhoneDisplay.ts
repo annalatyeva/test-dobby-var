@@ -1,6 +1,6 @@
 export const formatPhoneDisplay = (value: string) => {
   let num = value;
-  if (num[1] === "8") {
+  if (num[1] === "8" || num[1] === "7") {
     num = "7" + num.slice(2);
   }
 
